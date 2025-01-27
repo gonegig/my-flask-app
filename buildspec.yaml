@@ -28,8 +28,7 @@ phases:
       - docker push public.ecr.aws/k4z2i6m8/my-flask-app:latest
       - docker push public.ecr.aws/k4z2i6m8/my-flask-app:$CODEBUILD_RESOLVED_SOURCE_VERSION
       - echo Updating ECS service with new image...
-      - aws ecs update-service --cluster my-flask-app-cluster --service my-flask-app-service --force-new-deployment --desired-count 1 --task-definition family:my-flask-app-task 
-      - echo '[{"name":"flask-service","imageUri":"public.ecr.aws/k4z2i6m8/my-flask-app:'$CODEBUILD_RESOLVED_SOURCE_VERSION'"}]' > imagedefinitions.json
+      - aws ecs update-service --cluster my-flask-app-cluster --service my-flask-app-service --force-new-deployment --desired-count 1 --task-definition family:my-flask-app-container 
 
 artifacts:
   files:

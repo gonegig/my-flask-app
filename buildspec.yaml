@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.9  # Ensure Python runtime is set properly
+      python: 3.9
     commands:
       - echo Installing dependencies...
       - yum install -y aws-cli

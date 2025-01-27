@@ -12,9 +12,6 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/k4z2i6m8
-      - echo Verifying ECS cluster and service existence...
-      - aws ecs describe-clusters --cluster-names my-flask-app-cluster 
-      - aws ecs describe-services --cluster my-flask-app-cluster --services my-flask-app-service  # Replace with your actual service name
 
   build:
     commands:
@@ -27,8 +24,7 @@ phases:
       - echo Pushing the Docker image to ECR...
       - docker push public.ecr.aws/k4z2i6m8/my-flask-app:latest
       - docker push public.ecr.aws/k4z2i6m8/my-flask-app:$CODEBUILD_RESOLVED_SOURCE_VERSION
-      - echo Updating ECS service with new image...
-      - aws ecs update-service --cluster my-flask-app-cluster --service my-flask-app-service --force-new-deployment --desired-count 1 --task-definition family:my-flask-app-container 
+      - echo '[{"name":"flask-service","imageUri":"public.ecr.aws/k4z2i6m8/my-flask-app:'$CODEBUILD_RESOLVED_SOURCE_VERSION'"}]' > imagedefinitions.json
 
 artifacts:
   files:

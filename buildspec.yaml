@@ -1,19 +1,32 @@
 version: 0.2
 
 phases:
+  install:
+    runtime-versions:
+      docker: 19
+    commands:
+      - echo Installing dependencies...
+      - yum install -y aws-cli
+
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR Public...
-      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/k4z2i6m8
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/k4z2i6m8)
+
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t my-flask-app .
-      - docker tag my-flask-app:latest public.ecr.aws/k4z2i6m8/my-flask-app:latest
+      - docker build -t public.ecr.aws/k4z2i6m8/my-flask-app .
+      - docker tag public.ecr.aws/k4z2i6m8/my-flask-app:latest public.ecr.aws/k4z2i6m8/my-flask-app:$CODEBUILD_RESOLVED_SOURCE_VERSION
+
   post_build:
     commands:
-      - echo Pushing the Docker image to ECR Public...
+      - echo Pushing the Docker image to ECR...
       - docker push public.ecr.aws/k4z2i6m8/my-flask-app:latest
+      - docker push public.ecr.aws/k4z2i6m8/my-flask-app:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      # Create imagedefinitions.json
+      - echo '[{"name":"my-flask-app","imageUri":"public.ecr.aws/k4z2i6m8/my-flask-app:'$CODEBUILD_RESOLVED_SOURCE_VERSION'"}]' > imagedefinitions.json
+
 artifacts:
   files:
-    - '**/*'
+    - imagedefinitions.json

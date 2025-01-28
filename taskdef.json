@@ -1,0 +1,25 @@
+{
+    "family": "flask-service",
+    "containerDefinitions": [
+        {
+            "name": "flask-service",
+            "image": "public.ecr.aws/k4z2i6m8/my-flask-app:0274f8fecbecd225a8a2ff91a44425312a545660",
+            "portMappings": [
+                {
+                    "containerPort": 5000,
+                    "hostPort": 5000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "memory": 512,
+            "cpu": 256
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "networkMode": "awsvpc",
+    "memory": "512",
+    "cpu": "256"
+}
